@@ -14,7 +14,11 @@ datei-archiv-browser/
 │   ├── theme-violett.css # Alternatives Design
 │   └── theme-gemini.css  # Alternatives Design
 ├── data/
-│   └── files.json        # Dateiliste
+│   ├── files.json        # Dateiliste
+│   └── tags.json         # Persistente Tag-Zuordnungen
+├── scripts/
+│   ├── get-file-info.ps1 # PowerShell-Skript zur Erzeugung von files.json & tags.json
+│   └── repo-einrichten.py# Hilfsskript zum Einrichten des Repositories
 ├── .gitignore
 └── README.md
 ```
@@ -63,6 +67,25 @@ Oben in `js/script.js`:
 ## Design wechseln
 
 In `index.html` die Zeile `<link rel="stylesheet" href="css/theme-claude.css">` auf `theme-violett.css` oder `theme-gemini.css` ändern.
+
+## Skripte
+
+Im Ordner `scripts/` befinden sich Skripte zur Automatisierung und Datenvorbereitung:
+
+### `scripts/get-file-info.ps1`
+PowerShell-Skript zum Scannen von Verzeichnissen und Generieren der Dateien `files.json` und `tags.json`.
+
+* **Funktion**: Durchsucht rekursiv ein Basisverzeichnis nach Dateien (`.html`, `.txt`, `.md`), filtert nach Änderungsdatum (`CutOff`) und ignoriert bestimmte Pfade (z. B. `\HTML-Mirror\`). Vergibt Tags anhand von konfigurierbaren Regeln oder greift auf gespeicherte Tags aus `tags.json` zurück.
+* **Parameter**:
+  * `-BasePath`: Pfad zum durchsuchenden Verzeichnis (Standard: `C:\Users\<USER>\Documents`).
+  * `-CutOff`: Stichtag für das Änderungsdatum (Standard: 1. Oktober des laufenden Jahres).
+  * `-TagFile`: Pfad zur persistenten Tag-Datei (Standard: `tags.json` im Skriptordner).
+  * `-OutFile`: Pfad zur Ausgabedatei (Standard: `files.json` im Skriptordner).
+
+### `scripts/repo-einrichten.py`
+Python-Hilfsskript zur initialen Strukturierung und Einrichtung des Repositories `datei-archiv-browser`.
+
+* **Funktion**: Kopiert Quelldateien (`index.html`, `script.js`, Stylesheets, `files.json`, `README.md`) in die vorgegebene Zielordnerstruktur, legt eine `.gitignore`-Datei an und initialisiert optional ein Git-Repository mit einem ersten Commit.
 
 ## Veröffentlichen mit GitHub Pages
 
