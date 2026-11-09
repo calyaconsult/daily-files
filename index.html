@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datei-Archiv-Browser – dynamisch</title>
+<!-- Design wechseln: theme-claude.css | theme-violett.css | theme-gemini.css -->
+<link rel="stylesheet" href="css/theme-claude.css">
+<base target="_blank">
+</head>
+<body>
+
+<div class="container">
+    <h1>Datei-Archiv-Browser – dynamisch</h1>
+
+    <p class="subtitle">Nach Tag &amp; Dateiendung (.txt, .md, .html) zusammengefasst</p>
+    <p class="subtitle"><button class="btn" type="button" onclick="logAccu();">Daten als JSON</button></p>
+    <p class="subtitle" id="duplicates"></p>
+
+    <div class="stats-bar" id="statsBar">
+        <div class="stat-card">
+            <div class="stat-number" id="totalFiles">–</div>
+            <div class="stat-label">Dateien</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="totalDays">–</div>
+            <div class="stat-label">Tage</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="totalSize">–</div>
+            <div class="stat-label">Total MB</div>
+        </div>
+    </div>
+
+    <div id="content"></div>
+</div>
+<script src="js/script.js"></script>
+</body>
+</html>
