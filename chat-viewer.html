@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #333;
+    }
+    h2 {
+      margin-top: 30px;
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 6px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 8px 0;
+    }
+    a {
+      color: #1a0dab;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .dot.ok  { background: #2e9e3e; }
+    .dot.bad { background: #d32f2f; }
+
+    .lineno {
+      display: inline-block;
+      min-width: 3.2em;
+      margin-right: 6px;
+      color: #888;
+      font-size: 0.8em;
+      font-family: monospace;
+    }
+    .reason {
+      display: block;
+      margin: 2px 0 0 calc(12px + 8px + 3.2em + 6px);
+      color: #b71c1c;
+      font-size: 0.85em;
+    }
+
+    /* Zusammenfassung */
+    #summary {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 20px;
+      margin: 16px 0;
+      padding: 10px 14px;
+      border-radius: 6px;
+      background: #f3f3f3;
+    }
+    #summary.all-ok  { background: #e6f4e8; }
+    #summary.has-bad { background: #fdecea; }
+    #summary label { cursor: pointer; }
+
+    /* Filter: nur fehlerhafte Zeilen */
+    .only-bad li.ok { display: none; }
+    .only-bad section:not(:has(li.bad)) { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Generation Log (html from txt)</h1>
+
+  <div id="summary">
+    <strong id="summary-text">Lade Datei …</strong>
+    <label><input type="checkbox" id="only-bad"> nur fehlerhafte Zeilen anzeigen</label>
+  </div>
+
+  <div id="body-content"></div>
+
+<script>
+const fileUrl = './data/chat-examples.txt'
+
+// Erwartetes Zeilenformat: URL, Titel, Großbuchstaben, Datum 2026-MM-TT, 6-stelliger Code
+const LINE_PATTERN = /^(https:\/\/\S+)\s+([A-Za-zäöüÄÖÜé0-9 :.,;'\/?"()_-]+)\s+([A-Z]+)\s+(2026-[01][0-9]-[0-3][0-9])\s+([A-Za-z0-9]{6})$/;
+
+// Zeichen, die im Titel NICHT erlaubt sind (Gegenstück zur Zeichenklasse oben)
+const BAD_TITLE_CHARS = /[^A-Za-zäöüÄÖÜé0-9 :.,;'\/?"()_-]/g;
+
+fetch(fileUrl)
+  .then(r => {
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.text();
+  })
+  .then(t => displayResult(t))
+  .catch(err => {
+    document.getElementById("summary-text").textContent =
+      "Datei konnte nicht geladen werden: " + err.message;
+    document.getElementById("summary").classList.add("has-bad");
+  });
+
+document.getElementById("only-bad").addEventListener("change", e => {
+  document.getElementById("body-content").classList.toggle("only-bad", e.target.checked);
+});
+
+function displayResult(text) {
+  const { html, total, bad } = convertListToHTML(text);
+  document.getElementById("body-content").innerHTML = html;
+
+  const summary = document.getElementById("summary");
+  const label = document.getElementById("summary-text");
+  summary.classList.remove("all-ok", "has-bad");
+
+  if (bad === 0) {
+    label.textContent = `Alle ${total} Zeilen sind in Ordnung.`;
+    summary.classList.add("all-ok");
+  } else {
+    label.textContent = `${bad} von ${total} Zeilen fehlerhaft.`;
+    summary.classList.add("has-bad");
+  }
+  return true;
+}
+
+/**
+ * Prüft eine Link-Zeile und liefert eine Liste von Fehlergründen
+ * (leeres Array = Zeile ist in Ordnung).
+ */
+ function diagnoseLine(line) {
+   const m = LINE_PATTERN.exec(line);
+   if (m) {
+     // Regex passt: zusätzlich prüfen, ob das Datum wirklich existiert
+     return isRealDate(m[4])
+       ? []
+       : [`Datum ${m[4]} existiert nicht im Kalender`];
+   }
+
+   const problems = [];
+   const tokens = line.split(/\s+/);
+
+   if (!/^https:\/\/\S+$/.test(tokens[0])) {
+     problems.push("URL muss mit https:// beginnen");
+   }
+
+   const rest = tokens.slice(1);
+   if (rest.length === 0) {
+     problems.push("Titel, Kürzel, Datum und Code fehlen");
+     return problems;
+   }
+
+   // Von hinten nach vorne: Code, Datum, Kürzel, Rest = Titel
+   const code   = rest.pop();
+   const date   = rest.pop();
+   const kuerz  = rest.pop();
+   const title  = rest.join(" ");
+
+   if (code === undefined || !/^[A-Za-z0-9]{6}$/.test(code)) {
+     problems.push("Code fehlt oder ist nicht 6-stellig (nur Buchstaben/Ziffern)");
+   }
+   if (date === undefined || !/^2026-[01][0-9]-[0-3][0-9]$/.test(date)) {
+     problems.push("Datum fehlt oder ungültig (erwartet 2026-MM-TT)");
+   } else if (!isRealDate(date)) {
+     problems.push(`Datum ${date} existiert nicht im Kalender`);
+   }
+   if (kuerz === undefined || !/^[A-Z]+$/.test(kuerz)) {
+     problems.push("Kürzel fehlt oder nicht nur Großbuchstaben");
+   }
+   if (title === "") {
+     problems.push("Titel fehlt");
+   } else {
+     const badChars = [...new Set(title.match(BAD_TITLE_CHARS) || [])];
+     if (badChars.length) {
+       problems.push("Unzulässige Zeichen im Titel: " + badChars.join(" "));
+     }
+   }
+
+   if (problems.length === 0) {
+     problems.push("Zeile passt nicht zum erwarteten Format");
+   }
+   return problems;
+ }
+
+function convertListToHTML(text) {
+  // Zeilennummern der Originaldatei beibehalten (Leerzeilen zählen mit)
+  const lines = text
+    .split(/\r?\n/)
+    .map((raw, i) => ({ trimmed: raw.trim(), no: i + 1 }))
+    .filter(l => l.trimmed !== "");
+
+  const groups = {};
+  let groupId = '';
+
+  let html = "";
+  let listOpen = false;
+  let sectionOpen = false;
+  let total = 0;
+  let bad = 0;
+
+  // Erster Durchlauf: alle 6-stelligen Codes am Zeilenende sammeln
+  const codeLines = new Map(); // Code -> Liste der Zeilennummern
+  for (const { trimmed, no } of lines) {
+    if (!/^https?:\/\//.test(trimmed)) continue;
+    const tokens = trimmed.split(/\s+/);
+    if (tokens.length < 2) continue;
+    const code = tokens[tokens.length - 1];
+    if (!/^[A-Za-z0-9]{6}$/.test(code)) continue;
+    if (!codeLines.has(code)) codeLines.set(code, []);
+    codeLines.get(code).push(no);
+  }
+
+  const closeList = () => {
+    if (listOpen) { html += "  </ul>\n"; listOpen = false; }
+  };
+  const closeSection = () => {
+    closeList();
+    if (sectionOpen) { html += "</section>\n\n"; sectionOpen = false; }
+  };
+
+  for (const { trimmed, no } of lines) {
+    const lineNo = `<span class="lineno">Z. ${no}</span>`;
+
+    if (/^https?:\/\//.test(trimmed)) {
+      // ── Link line ──
+      if (!sectionOpen) {           // Link vor der ersten Überschrift
+        html += "<section>\n";
+        sectionOpen = true;
+      }
+      if (!listOpen) {
+        html += "  <ul>\n";
+        listOpen = true;
+      }
+
+      const problems = diagnoseLine(trimmed);
+
+      // Eindeutigkeit des Codes prüfen
+      const lastToken = trimmed.split(/\s+/).pop();
+      const sameCode = codeLines.get(lastToken);
+      if (sameCode && sameCode.length > 1) {
+        const others = sameCode.filter(n => n !== no);
+        problems.push(`Code ${lastToken} ist nicht eindeutig (auch in Z. ${others.join(", ")})`);
+      }
+
+      const valid = problems.length === 0;
+      total++;
+      if (!valid) bad++;
+
+      const tip = valid ? "Format OK" : problems.join("; ");
+      const dot = `<span class="dot ${valid ? "ok" : "bad"}" title="${escapeHTML(tip)}"></span>`;
+      const reason = valid
+        ? ""
+        : `<span class="reason">${problems.map(escapeHTML).join(" · ")}</span>`;
+
+      const match = trimmed.match(/^(https?:\/\/\S+)\s+(.+)$/);
+      let url, linkText;
+      if (match) {
+        url = match[1];
+        linkText = match[2];
+        groups[groupId] ??= {};
+        groups[groupId][escapeHTML(linkText)] = 0;
+      } else {
+        // Nur URL ohne Titel: URL dient als Linktext
+        url = trimmed;
+        linkText = trimmed;
+      }
+
+      html += `    <li class="${valid ? "ok" : "bad"}">${dot}${lineNo}` +
+              `<a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(linkText)}</a>` +
+              `${reason}</li>\n`;
+
+    } else {
+      // ── Section header (oder Abschluss-Marker wie =myAI) ──
+      closeSection();
+
+      if (/^=/.test(trimmed)) {
+        // Listenende-Marker: nichts anzeigen
+        groupId = '';
+        continue;
+      }
+
+      html += "<section>\n";
+      sectionOpen = true;
+      html += `  <h2>${escapeHTML(trimmed)}</h2>\n`;
+
+      // Sieht nach einem kaputten Link aus (z. B. "htps://...")
+      if (trimmed.includes("://")) {
+        total++;
+        bad++;
+        html += `  <ul>\n    <li class="bad"><span class="dot bad"></span>${lineNo}` +
+                `<span class="reason">Sieht wie ein Link aus, beginnt aber nicht mit https://</span></li>\n  </ul>\n`;
+      }
+
+      groupId = escapeHTML(trimmed);
+      groups[groupId] = {};
+    }
+  }
+  console.log(groups);
+  closeSection();
+
+  return { html, total, bad };
+}
+
+/**
+ * Escapes special HTML characters to prevent injection.
+ */
+function escapeHTML(str) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+/**
+ * Prüft, ob ein String im Format JJJJ-MM-TT ein echtes Kalenderdatum ist.
+ * Z. B. ist 2026-09-31 ungültig, weil der September nur 30 Tage hat.
+ */
+function isRealDate(str) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(str);
+  if (!m) return false;
+  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const date = new Date(Date.UTC(y, mo - 1, d));
+  return date.getUTCFullYear() === y &&
+         date.getUTCMonth() === mo - 1 &&
+         date.getUTCDate() === d;
+}
+</script>
+</body>
+</html>
