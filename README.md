@@ -22,6 +22,7 @@ datei-archiv-browser/
 │   ├── get-file-info.ps1 # PowerShell-Skript zur Erzeugung von files.json & tags.json
 │   └── repo-einrichten.py# Hilfsskript zum Einrichten des Repositories
 ├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
@@ -102,3 +103,7 @@ Python-Hilfsskript zur initialen Strukturierung und Einrichtung des Repositories
 ## Veröffentlichen mit GitHub Pages
 
 *Settings → Pages → Branch `main`, Ordner `/ (root)`*
+
+## Lizenz
+
+Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
