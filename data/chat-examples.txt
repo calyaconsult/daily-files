@@ -1,0 +1,24 @@
+ChatGPT
+https://chatgpt.com/c/48b7d1e3-...-6f93a0c2d5b7 SQL-Abfrage für Umsatz pro Kanton DATENBANKEN 2026-11-04
+https://chatgpt.com/c/79d3e5b0-...-2a64c1f8e970 Gedicht zum 70. Geburtstag der Grossmutter GEDICHTE 2026-11-07 Ft2oKp
+https://chatgpt.com/c/e82a60d7-...-c3b15f9a0d4e Rezept für Zürcher Geschnetzeltes mit Rösti KOCHEN 2026-11-09 Xw5cJd
+https://chatgpt.com/c/3b9e1c4a-...-5d0a7e92f1b8 Reiseroute für 5 Tage in Lissabon planen REISEN 2026-11-11 kQ7zR1
+=ChatGPT
+Claude
+https://claude.ai/chat/c63a8f05-...-d1e472b9a068 Lernkarten zur Französischen Revolution GESCHICHTE 2026-11-03 Ug5ZtP
+https://claude.ai/chat/b04e7d92-...-9c15a3e6f284 Quantenverschränkung für Gymnasiasten erklärt PHYSIK 2026-11-07 Dz8wRx
+https://claude.ai/chat/5f1b9c36-...-7e20a8d4b693 Zusammenfassung eines PDFs zum Schweizer Mietrecht RECHT 2026-11-09 h9BnTe
+https://claude.ai/chat/a7c2d815-...-0f4e9b6a3c21 Python-Skript zum Umbenennen von Fotodateien PROGRAMMIERUNG 2026-11-11 Lm3vNa
+=Claude
+Gemini
+https://gemini.google.com/app/1e95b7d4-...-a38c60f2d9e5 Tomaten auf dem Balkon im Herbst überwintern GARTEN 2026-11-02 Bk0DfN
+https://gemini.google.com/app/6a2f90c8-...-e5d7b14a3c09 Trainingsplan für Halbmarathon in 12 Wochen SPORT 2026-11-06 3JuLbV
+https://gemini.google.com/app/d7036ae1-...-48c9f2b5e1a0 Bild: Aquarell eines Matterhorn-Sonnenaufgangs KUNST 2026-11-08 Vr4sGu
+https://gemini.google.com/app/c41f8e07-...-b92d6a05e3f7 Vergleich von Wärmepumpen und Pelletheizungen ENERGIE 2026-11-10 8TfhWc
+=Gemini
+Mistral
+https://chat.mistral.ai/chat/8b40e2c7-...-3f7a91d6c5b2 Mermaid-Flowchart für Onboarding-Prozess erstellen PROZESSE 2026-11-01 Qr9MjA
+https://chat.mistral.ai/chat/f19c3a64-...-0d8b25e7c4a1 Bewerbungsschreiben als Pflegefachfrau überarbeiten KARRIERE 2026-11-05 Ye7HcS
+https://chat.mistral.ai/chat/2c84f7a9-...-b6e013d85a7c Excel-Formel für monatliche Budgetübersicht FINANZEN 2026-11-08 aN6yQm
+https://chat.mistral.ai/chat/9d05b3e2-...-1a7c48fe5d60 Französische Verben im passé composé üben SPRACHEN 2026-11-10 Pz2YqB
+=Mistral
