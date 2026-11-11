@@ -79,7 +79,7 @@ Neben dem Datei-Archiv-Browser enthält das Projekt die eigenständige Seite `ch
 * **Validierung & Filter**:
   * Gültige und fehlerhafte Zeilen werden optisch hervorgehoben (grüner/roter Indikator) mit detaillierten Hinweisen bei ungültigem Format, falschem Datum, unzulässigen Zeichen oder doppelten Codes.
   * Eine Filteroption («nur fehlerhafte Zeilen anzeigen») erleichtert die Korrektur der Textdatei.
-* **Hinweis zu den Beispiel-Chats**: alle Einträge wurden von einem Chatbot generiert und dienen einzig der Veranschaulichung des Format.
+* **Hinweis zu den Beispiel-Chats**: alle Einträge in `data/chat-examples.txt` wurden von einem Chatbot generiert und dienen einzig der Veranschaulichung des Formats.
 ## Skripte
 
 Im Ordner `scripts/` befinden sich Skripte zur Automatisierung und Datenvorbereitung:
