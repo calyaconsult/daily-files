@@ -7,6 +7,7 @@ Eine kleine statische Webseite, die eine Dateiliste (`data/files.json`) einliest
 ```
 datei-archiv-browser/
 ├── index.html            # Hauptseite (Deutsch)
+├── chat-viewer.html      # Anzeige- und Validierungstool für Chat-Links
 ├── js/
 │   └── script.js         # Laden, Gruppieren und Darstellen der Daten
 ├── css/
@@ -14,6 +15,7 @@ datei-archiv-browser/
 │   ├── theme-violett.css # Alternatives Design
 │   └── theme-gemini.css  # Alternatives Design
 ├── data/
+│   ├── chat-examples.txt # Beispieldatei mit Chat-Links für chat-viewer.html
 │   ├── files.json        # Dateiliste
 │   └── tags.json         # Persistente Tag-Zuordnungen
 ├── scripts/
@@ -31,7 +33,7 @@ Der Browser blockiert `fetch` auf `file://`-Adressen. Bitte daher einen kleinen 
 python -m http.server 8000
 ```
 
-Danach `http://localhost:8000` öffnen.
+Danach `http://localhost:8000` (Hauptseite) oder `http://localhost:8000/chat-viewer.html` (Chat-Viewer) öffnen.
 
 ## Datenformat (`data/files.json`)
 
@@ -67,6 +69,16 @@ Oben in `js/script.js`:
 ## Design wechseln
 
 In `index.html` die Zeile `<link rel="stylesheet" href="css/theme-claude.css">` auf `theme-violett.css` oder `theme-gemini.css` ändern.
+
+## Chat-Viewer (`chat-viewer.html`)
+
+Neben dem Datei-Archiv-Browser enthält das Projekt die eigenständige Seite `chat-viewer.html`:
+
+* **Zweck**: Liest Chat-Verlaufseinträge aus einer Textdatei ein (standardmässig `data/chat-examples.txt`), gruppiert sie nach Abschnitten (z. B. ChatGPT, Claude, Gemini, Mistral) und validiert die Einträge.
+* **Format**: Erwartet pro Zeile URL, Titel, Kategoriekürzel (Grossbuchstaben), Datum (`JJJJ-MM-TT`) sowie einen eindeutigen 6-stelligen Code.
+* **Validierung & Filter**:
+  * Gültige und fehlerhafte Zeilen werden optisch hervorgehoben (grüner/roter Indikator) mit detaillierten Hinweisen bei ungültigem Format, falschem Datum, unzulässigen Zeichen oder doppelten Codes.
+  * Eine Filteroption («nur fehlerhafte Zeilen anzeigen») erleichtert die Korrektur der Textdatei.
 
 ## Skripte
 
